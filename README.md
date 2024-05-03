@@ -347,6 +347,12 @@ head(go_search(method="GO2gene","GO:0003700"))
 go_search(method="term2GO", "nucleus")
        go_id    Term
 1 GO:0005634 nucleus
+
+# Get me the term description for GO ID "GO:0000006"
+go_search(method="GO2term", "GO:0000006")
+       go_id                                                  Term
+1 GO:0000006 high-affinity zinc transmembrane transporter activity
+
 ```
 
 Now, let's run our first analysis.
