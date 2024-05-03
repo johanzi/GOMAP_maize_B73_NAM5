@@ -11,7 +11,7 @@ Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493
 
 * UNIX-based computer with a decent amount of RAM and cores (mine had 10 quad-core processors (40 cores) of 2.2 GHz each, 63 Gb of RAM, 4 Gb GPU, OS Linux Mint 19.1 Cinnamon)
 * Singularity (version 3.6.3 used here
-* GOMAP (version 1.3.5 used here)
+* GOMAP (version 1.3.9 used here)
 
 # Install Singularity and go
 
@@ -58,10 +58,9 @@ Once Singularity and go are installed properly, GOMAP should be a breeze to inst
 
 ```
 # Clone GOMAP git repository
-git clone https://github.com/Dill-PICL/GOMAP-singularity.git 
-git checkout v1.3.5
-
-cd GOMAP-singularity/
+git clone https://github.com/Dill-PICL/GOMAP-singularity.git
+cd GOMAP-singularity
+git checkout v1.3.9
 
 # Add this to your ~/.bashrc or run the line in the terminal
 export GOMAP_LOC="/path/to/GOMAP-singularity/"
@@ -189,7 +188,7 @@ wc -l maize_B73_NAM5.aggregate.GO_gene.gaf
 493310 maize_B73_NAM5.aggregate.GO_gene.gaf
 ```
 
-Note the difference, with 846,030 annotations when considering protein isoforms, and 493,310 when collapsed at the gene level. If different protein isoforms of a same gene have different GO terms, the information is kept at the gene level so this way is OK for most people I think.
+Note the difference, with 846,030 annotations when considering protein isoforms, and 493,310 when collapsed at the gene level. If different protein isoforms of a same gene have different GO terms, the information is kept at the gene level. Also, these output files being too big to upload in GitHub (maize_B73_NAM5.aggregate.gaf = 100 Mb, maize_B73_NAM5.aggregate.GO_gene.gaf=92.6Mb), I provided a more compact R object containing a dataframe with the geneID and their corresponding GO IDs (TERM2GENE.rds, 1.48 Mb, see below). I can provide the raw text files upon request if needed.
 
 # GO term enrichment analysis
 
