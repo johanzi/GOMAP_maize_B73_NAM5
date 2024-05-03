@@ -415,15 +415,25 @@ Note the difference between GeneRation and BgRatio, the two variables usually pl
 > k = size of the overlap of 'a vector of gene id' you input with the specific geneset (eg E2F_targets), only unique genes; (the number of genes within that list n, which are annotated to the node.
 > n = size of the overlap of 'a vector of gene id' you input with all the members of the collection of genesets (eg the HALLMARK collection),only unique genes; is the size of the list of genes of interest
 
-Obviously, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term, so the GeneRatio is 1 (all genes falling annotated with this GO ID were in the list provided (85/85).
+Here, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term, so the GeneRatio is 1 (85/85).
 
-To dig further into the GO enrichment analysis of BP ontology, one can turn it into a data frame:
+To dig further into the GO enrichment analysis of the three ontologies, one can turn it into data frames:
 
 ```{r}
 df_ego_analysis_BP <- as.data.frame(list_ego_results$ego_BP@result)
+df_ego_analysis_CC <- as.data.frame(list_ego_results$ego_CC@result)
+df_ego_analysis_MF <- as.data.frame(list_ego_results$ego_MF@result)
 ```
 
-Here it is, the end of the pipeline. I hope this will save time for others that struggle finding a GO term annotation and a straight forward way to visualize GO term enrichment analysis results.
+One can also export these data frame as text files to import in Excel (ribbon Data > import from text). A very convenient option to add the output in Supplementary tables, coming along with GO term plots shown in figures. I find this is a good practice and allows readers to quickly explore the results in Excel.
+
+```{r}
+write_delim(df_ego_analysis_BP, "df_ego_analysis_BP.txt", delim="\t")
+write_delim(df_ego_analysis_CC, "df_ego_analysis_CC.txt", delim="\t")
+write_delim(df_ego_analysis_MF, "df_ego_analysis_MF.txt", delim="\t")
+```
+
+Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
 
 ## Authors
 
