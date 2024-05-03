@@ -199,7 +199,7 @@ Now, one can use this gaf file in different softwares performing GO term enrichm
 
 These two resources give nice examples of how to use clusterProfiler: [https://yulab-smu.top/biomedical-knowledge-mining-book/index.html](https://yulab-smu.top/biomedical-knowledge-mining-book/enrichment-overview.html) and [https://guangchuangyu.github.io/2016/01/go-analysis-using-clusterprofiler/]([https://guangchuangyu.github.io/2016/01/go-analysis-using-clusterprofiler/).
 
-I detailed below how to run a GO term analysis using B73 NAM5 gene ID (Zm00000ebXXXXXXX)
+I detailed below how to run a GO term analysis using B73 NAM5 gene ID (e.g. Zm00001eb000800).
 
 ## Install clusterProfiler
 
