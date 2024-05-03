@@ -266,7 +266,7 @@ Get a summary of all 44,509 GO ID and their terms (http://geneontology.org/docs/
 
 > Every term has a human-readable term name — e.g. mitochondrion, glucose transmembrane transport, or amino acid binding — and a GO ID, a unique seven digit identifier prefixed by GO:, e.g. GO:0005739, GO:1904659, or GO:0016597
 
-This step is needed to be performed only once and can then be used across any GO analysis and any species.
+This step must be performed only once and the TERM2NAME R object is the same for any GO annotation file of any species.
 
 ```{r}
 library(AnnotationDbi)
