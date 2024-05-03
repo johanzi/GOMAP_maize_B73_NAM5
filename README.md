@@ -36,7 +36,7 @@ Although the GOMAP manual recommends running the pipeline on a high-performance 
 * UNIX-based computer with a decent amount of RAM and cores (mine had 10 quad-core processors (40 cores) of 2.2 GHz each, 63 Gb of RAM, 4 Gb GPU, OS Linux Mint 19.1 Cinnamon)
 * Singularity (version 3.6.3 used here)
 * GOMAP (version 1.3.9 used here)
-* clusterProfiler R packages and dependencies
+* clusterProfiler R package and dependencies
 
 # Install Singularity and Go
 
