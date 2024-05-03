@@ -393,7 +393,7 @@ $ego_MF
 
 # We get significant hits in all three ontologies
 ```
-If any significant enrichment is found, one can visualize in GO term plot using `dotplot` function from the `enrichplot` package. If you want to tweak more the plotting parameters, have a look at the enrichplot vignette [here](https://bioconductor.org/packages/release/bioc/manuals/enrichplot/man/enrichplot.pdf).
+If any significant enrichment is found, one can visualize the results using the `dotplot` function from the `enrichplot` package. If you want to tweak the plotting parameters, have a look at the enrichplot vignette [here](https://bioconductor.org/packages/release/bioc/manuals/enrichplot/man/enrichplot.pdf).
 
 ```{r}
 dotplot(list_ego_results$ego_BP,showCategory=10, title="BP")
@@ -401,7 +401,7 @@ dotplot(list_ego_results$ego_CC,showCategory=10, title="CC")
 dotplot(list_ego_results$ego_MF,showCategory=10, title="MF")
 ```
 
-Here I show the 10 first most significant hits for each ontology and rank them by GeneRatio.
+GO terms are here ranked by GeneRatio, the adjusted p-value is color-coded, and the number of genes for each GO term is defined by the diameter of the circles.
 
 ![](GO_analysis_plots.JPG)
 
