@@ -86,18 +86,27 @@ go_search <- function(method="gene2GO",id){
   }
   
   if(method=="GO2gene"){
-    df <- TERM2NAME_ALL %>% dplyr::filter(GO==id)
+    df <- TERM2GENE %>% dplyr::filter(GO==id)
     return(df)
   }
   
   if(method=="GO2term"){
-    df <-TERM2NAME_ALL %>% dplyr::filter(go_id %in% id)
+    df <-TERM2NAME_ALL %>% dplyr::filter(go_id==id)
     return(df)
   }
   
   if(method=="term2GO"){
-    df <- TERM2NAME_ALL %>% dplyr::filter(Term %in% id)
+    df <- TERM2NAME_ALL %>% dplyr::filter(Term==id)
     return(df)
   }
-  
+ 
+}
+
+# Testing examples for go_search function
+#go_search(method="gene2GO", "Zm00001eb248920")
+#go_search(method="GO2gene", "GO:0000011")
+#go_search(method="GO2term", "GO:0000062")
+#go_search(method="term2GO", "reproduction")
+
+                      
 }
