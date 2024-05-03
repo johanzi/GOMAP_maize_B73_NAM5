@@ -405,7 +405,7 @@ GO terms are here ranked by GeneRatio, the adjusted p-value is color-coded, and 
 
 ![](GO_analysis_plots.JPG)
 
-Note the difference between GeneRation and BgRatio, the two variables usually plotted on the x axis of a GO enrichment plot (from https://www.biostars.org/p/220465/):
+Note the difference between GeneRatio and BgRatio, the two variables that are usually plotted on the x axis of GO enrichment plots (from https://www.biostars.org/p/220465/):
 
 > BgRatio, M/N.
 > M = size of the geneset (eg size of the E2F_targets); (is the number of genes within that distribution that are annotated (either directly or indirectly) to the node of > > interest).
@@ -425,7 +425,7 @@ df_ego_analysis_CC <- as.data.frame(list_ego_results$ego_CC@result)
 df_ego_analysis_MF <- as.data.frame(list_ego_results$ego_MF@result)
 ```
 
-One can also export these data frame as text files to import in Excel (ribbon Data > import from text). A very convenient option to add the output in Supplementary tables, coming along with GO term plots shown in figures. I find this is a good practice and allows readers to quickly explore the results in Excel.
+One can also export these data frames as text files to import in Excel (ribbon Data > import from text). A very convenient option to add the output in Supplementary tables, coming along with GO term plots shown in figures. I find this is a good practice and allows readers to quickly explore the results in Excel.
 
 ```{r}
 write_delim(df_ego_analysis_BP, "df_ego_analysis_BP.txt", delim="\t")
