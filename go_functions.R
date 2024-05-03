@@ -1,7 +1,7 @@
 
 # Objects needed for GO analysis
-TERM2GENE <-  readRDS("path/to/TERM2GENE.rds")
-TERM2NAME <- readRDS("path/to/TERM2NAME.rds")
+TERM2GENE <-  readRDS("TERM2GENE.rds")
+TERM2NAME <- readRDS("TERM2NAME.rds")
 
 # Function to perform ego, provide as argument a vector containing geneID (characters type)
 ego_analysis <- function(vector_geneID){
