@@ -2,7 +2,7 @@
 GO term annotation of the maize B73 NAM5 assembly
 
 - [Objectives](#objectives)
-- [Requisites](#requisites)
+- [Prerequisites](#prerequisites)
 - [Install Singularity and Go](#install-singularity-and-go)
 - [Install GOMAP](#install-gomap)
 - [Prepare protein sequences of B73 NAM5](#prepare-protein-sequences-of-b73-nam5)
@@ -31,7 +31,7 @@ Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493
 
 Although the GOMAP manual recommends running the pipeline on a high-performance cluster (HPC) due to high computational requirements, I ran the pipeline locally, and it took my workstation (10 quad-core processors of 2,2 GHz each) about one month to complete the annotation. Here I describe the GOMAP annotation pipeline I used and how I processed the output in R to perform GO enrichment analyses.
 
-# Requisites
+# Prerequisites
 
 * UNIX-based computer with a decent amount of RAM and cores (mine had 10 quad-core processors (40 cores) of 2.2 GHz each, 63 Gb of RAM, 4 Gb GPU, OS Linux Mint 19.1 Cinnamon)
 * Singularity (version 3.6.3 used here)
