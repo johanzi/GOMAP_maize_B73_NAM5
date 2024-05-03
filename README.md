@@ -34,12 +34,12 @@ Although the GOMAP manual recommends running the pipeline on a high-performance 
 # Requisites
 
 * UNIX-based computer with a decent amount of RAM and cores (mine had 10 quad-core processors (40 cores) of 2.2 GHz each, 63 Gb of RAM, 4 Gb GPU, OS Linux Mint 19.1 Cinnamon)
-* Singularity (version 3.6.3 used here
+* Singularity (version 3.6.3 used here)
 * GOMAP (version 1.3.9 used here)
 
-# Install Singularity and go
+# Install Singularity and Go
 
-I found this step to be the most tedious somehow. I had to use several come-arounds to install the software on my workstation. I recommend you first try the installation method from [syslabs](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and see if you need to go through the hard way (below) or not. I put the script I used here but you may try an easier way and you will have to adjust some variables.
+I found this step to be the most tedious somehow. I had to use several come-arounds to install the softwares on my workstation. I recommend you first try the installation method from [syslabs](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and see if you need to go through the hard way (below) or not. I put the script I used here but you may try an easier way and you will have to adjust some variables.
 
 ```
 sudo apt-get update && \
@@ -78,7 +78,7 @@ singularity version
 
 # Install GOMAP
 
-Once Singularity and go are installed properly, GOMAP should be a breeze to install.
+Once Singularity and Go are installed properly, GOMAP should be easy to install. I used GOMAP v1.3.9 at the same time. Feel free to try with the most recent version at the time you run the pipeline.
 
 ```
 # Clone GOMAP git repository
@@ -96,7 +96,7 @@ export GOMAP_LOC="/path/to/GOMAP-singularity/"
 
 # Protein sequences of B73 NAM5
 
-Download fasta file containing all annotated peptides from Maize GDB.
+Download the fasta file containing all annotated peptides from Maize GDB.
 
 ```
 # Download fasta file
@@ -110,7 +110,7 @@ grep ">" Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa | wc -l
 sed -i 's/\*//' Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
 ```
 
-# Create config file for B73 NAM5
+# Create a GOMAP configuration file
 
 GOMAP requires a configuration file called `min-config.yml` to run. I downloaded a template from the gomap developers and tweaked it a bit.
 ```
@@ -166,20 +166,22 @@ Here are the commands:
 
 ```
 cd /path/to/GOMAP-singularity/
+# Be sure to have Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
+# and min-config.yml in this directory
 
-./run-GOMAP-SINGLE.sh --step=seqsim --config=B73_NAM5/min-config.yml
+./run-GOMAP-SINGLE.sh --step=seqsim --config=min-config.yml
 
-./run-GOMAP-SINGLE.sh --step=domain --config=B73_NAM5/min-config.yml
+./run-GOMAP-SINGLE.sh --step=domain --config=min-config.yml
 
-./run-GOMAP-SINGLE.sh --step=fanngo --config=B73_NAM5/min-config.yml
+./run-GOMAP-SINGLE.sh --step=fanngo --config=min-config.yml
 
-./run-GOMAP-SINGLE.sh --step=mixmeth-blast --config=B73_NAM5/min-config.yml
+./run-GOMAP-SINGLE.sh --step=mixmeth-blast --config=min-config.yml
 
-./run-GOMAP-SINGLE.sh --step=mixmeth-preproc --config=B73_NAM5/min-config.yml
+./run-GOMAP-SINGLE.sh --step=mixmeth-preproc --config=min-config.yml
 
-./run-GOMAP-SINGLE.sh --step=mixmeth --config=B73_NAM5/min-config.yml
+./run-GOMAP-SINGLE.sh --step=mixmeth --config=min-config.yml
 
-./run-GOMAP-SINGLE.sh --step=aggregate --config=B73_NAM5/min-config.yml
+./run-GOMAP-SINGLE.sh --step=aggregate --config=min-config.yml
 ```
 
 # Post-processing
@@ -194,7 +196,7 @@ GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003690      
 GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003727      GOMAP:0000      IEA     RBH:I1IST9      F                       gene    taxon:4577      20221129        GOMAP-v1.3.9
 ```
 
-Note that each protein isoforms are annotated but most people usually consider only genes when performing GO term enrichment analyses. Therefore, one must collapse this annotation at the gene level:
+Note that each protein isoforms are annotated but people usually consider only genes when performing GO term enrichment analyses. Therefore, one must collapse this annotation at the gene level:
 
 ```
 # Get protein isoform and GO term
@@ -215,7 +217,7 @@ wc -l maize_B73_NAM5.aggregate.GO_gene.gaf
 493310 maize_B73_NAM5.aggregate.GO_gene.gaf
 ```
 
-Note the difference, with 846,030 annotations when considering protein isoforms, and 493,310 when collapsed at the gene level. If different protein isoforms of a same gene have different GO terms, the information is kept at the gene level. Also, these output files being too big to upload in GitHub (maize_B73_NAM5.aggregate.gaf = 100 Mb, maize_B73_NAM5.aggregate.GO_gene.gaf=92.6Mb), I provided a more compact R object containing a dataframe with the geneID and their corresponding GO IDs (TERM2GENE.rds, 1.48 Mb, see below). I can provide the raw text files upon request if needed.
+Note the difference, with 846,030 annotations when considering protein isoforms, and 493,310 when collapsed at the gene level. If different protein isoforms of the same gene have different GO terms, the information is kept at the gene level anyway. Also, these output files being too big to upload in GitHub (maize_B73_NAM5.aggregate.gaf = 100 Mb, maize_B73_NAM5.aggregate.GO_gene.gaf=92.6Mb), I provided a more compact R object containing a dataframe with the geneID and their corresponding GO IDs (TERM2GENE.rds, 1.48 Mb, see below). I can provide the raw text files upon request if needed.
 
 # GO term enrichment analysis
 
