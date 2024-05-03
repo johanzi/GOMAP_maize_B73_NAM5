@@ -288,7 +288,7 @@ I created a [go_functions.R](go_functions.R) file that can be sourced in your cu
 
 The [go_functions.R](go_functions.R) file contains two R functions:
 
-The function `ego_analysis` performs three GO term analyses, one for each ontology: Biological process (BP), cellular component (CC), and molecular function (MF). One can explicit the wanted ontology when using the function `enrichGO` using the argument "ont" (e.g. `ont="MF"`) but this is not possible when using home-made GO annotation (as we do here for B73 NAM5). In the case of home-made annotation, clusterProfiler provides the function `enrich` but there is no possibility to define what ontology to investigate. I, therefore, split the TERM2NAME object into three separate objects, containing BP, CC, and MF GO terms. The home-made function `ego_analysis` will return a list of ego result objects (class enrichResult) that can be processed further for plotting with for instance the `dotplot` function of the `enrichplot` package (we will see that below). One can also easily turn these "ego" objects into data frames to perform manipulation with `tidyverse` functions for instance.
+The function `ego_analysis` performs three GO term analyses, one for each ontology: Biological process (BP), cellular component (CC), and molecular function (MF). One can explicit the wanted ontology when using the function `enrichGO` using the argument "ont" (e.g. `ont="MF"`) but this is not possible when using home-made GO annotation (as we do here for B73 NAM5). In the case of home-made annotation, clusterProfiler provides the function `enrich` but there is no possibility to define what ontology to investigate. I, therefore, split the TERM2NAME object into three separate objects, containing BP, CC, and MF GO terms. The home-made function `ego_analysis` will return a list of ego result objects (class enrichResult) that can be processed further for plotting with for instance the `dotplot` function of the `enrichplot` package (we will see that below). One can also easily turn these "enrichResult" class R objects into classical data frames to perform easy manipulation with `tidyverse` functions.
 
 The function `go_search` is a practical tool to find correspondences between gene ID, GO ID, and a GO term name. Little examples are worth lengthy explanations:
 
@@ -328,22 +328,16 @@ git clone https://github.com/johanzi/GOMAP_maize_B73_NAM5.git
 # Be sure to source the go_functions.R file properly
 source("/path/to/GOMAP_maize_B73_NAM5go_functions.R")
 
-# Create a list of 100 random genes
-TERM2GENE <-  readRDS("TERM2GENE.rds")
-random_100_geneID <- sample(TERM2GENE$gene, size=100)
-
-# Run the enrichment analysis
-# Let's select all genes annotated with
+# Let's make a vector of all 85 genes annotated with
 # GO ID GO:0019684 (photosynthesis, light reaction)
-# That makes a vector of 85 genes
 geneID_GO0019684 <- GO_analysis_data %>% filter(GO=="GO:0019684") %>% dplyr::select(gene) %>% pull()
 
 # Run the ego_analysis function providing the vector of geneID argument
-ego <- ego_analysis(geneID_GO0019684)
+list_ego_results <- ego_analysis(geneID_GO0019684)
 
 # Check if any of the three analyses yielded GO terms
 # with significant p-adjusted value.
-lapply(ego_analysis, function(x) sum(x@result$p.adjust < 0.05))
+lapply(list_ego_results, function(x) sum(x@result$p.adjust < 0.05))
 
 $ego_BP
 [1] 112
@@ -359,9 +353,9 @@ $ego_MF
 If any significant enrichment is found, one can visualize in GO term plot using `dotplot` function from the enrichplot package.
 
 ```{r}
-dotplot(ego_analysis$ego_BP,showCategory=10, title="BP")
-dotplot(ego_analysis$ego_CC,showCategory=10, title="CC")
-dotplot(ego_analysis$ego_MF,showCategory=10, title="MF")
+dotplot(list_ego_results$ego_BP,showCategory=10, title="BP")
+dotplot(list_ego_results$ego_CC,showCategory=10, title="CC")
+dotplot(list_ego_results$ego_MF,showCategory=10, title="MF")
 ```
 
 ![](GO_analysis_plots.JPG)
@@ -371,9 +365,7 @@ Obviously, the term "GO:0019684 (photosynthesis, light reaction)" is the stronge
 To dig further into the GO enrichment analysis of BP ontology, one can turn it into a data frame:
 
 ```{r}
-df_ego_analysis_BP <- as.data.frame(ego_analysis$ego_BP@result)
-
-ego$ego_BP@result
+df_ego_analysis_BP <- as.data.frame(list_ego_results$ego_BP@result)
 ```
 
 Here it is, the end of the pipeline. I hope this will save time for others that struggle finding a GO term annotation and a straight forward way to visualize GO term enrichment analysis results.
