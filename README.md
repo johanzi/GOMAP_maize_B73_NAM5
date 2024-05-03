@@ -393,7 +393,7 @@ $ego_MF
 
 # We get significant hits in all three ontologies
 ```
-If any significant enrichment is found, one can visualize in GO term plot using `dotplot` function from the enrichplot package.
+If any significant enrichment is found, one can visualize in GO term plot using `dotplot` function from the `enrichplot` package. If you want to tweak more the plotting parameters, have a look at the enrichplot vignette [here](https://bioconductor.org/packages/release/bioc/manuals/enrichplot/man/enrichplot.pdf).
 
 ```{r}
 dotplot(list_ego_results$ego_BP,showCategory=10, title="BP")
@@ -401,9 +401,21 @@ dotplot(list_ego_results$ego_CC,showCategory=10, title="CC")
 dotplot(list_ego_results$ego_MF,showCategory=10, title="MF")
 ```
 
+Here I show the 10 first most significant hits for each ontology and rank them by GeneRatio.
+
 ![](GO_analysis_plots.JPG)
 
-Obviously, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term.
+Note the difference between GeneRation and BgRatio, the two variables usually plotted on the x axis of a GO enrichment plot (from https://www.biostars.org/p/220465/):
+
+> BgRatio, M/N.
+> M = size of the geneset (eg size of the E2F_targets); (is the number of genes within that distribution that are annotated (either directly or indirectly) to the node of > > interest).
+>
+> N = size of all of the unique genes in the collection of genesets (example the HALLMARK collection); (is the total number of genes in the background distribution (universe)
+> GeneRatio is k/n.
+> k = size of the overlap of 'a vector of gene id' you input with the specific geneset (eg E2F_targets), only unique genes; (the number of genes within that list n, which are annotated to the node.
+> n = size of the overlap of 'a vector of gene id' you input with all the members of the collection of genesets (eg the HALLMARK collection),only unique genes; is the size of the list of genes of interest
+
+Obviously, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term, so the GeneRatio is 1 (all genes falling annotated with this GO ID were in the list provided (85/85).
 
 To dig further into the GO enrichment analysis of BP ontology, one can turn it into a data frame:
 
