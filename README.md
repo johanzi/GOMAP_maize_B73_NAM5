@@ -199,10 +199,13 @@ Note that each protein isoforms are annotated but most people usually consider o
 ```
 # Get protein isoform and GO term
 # Remove 2 first lines (headers)
-sed '1,2d' maize_B73_NAM5.aggregate.gaf | cut -f2 - | cut -d_ -f1 - > maize_B73_NAM5.aggregate.gaf.genes
-sed '1,2d' maize_B73_NAM5.aggregate.gaf | cut -f5 - > maize_B73_NAM5.aggregate.gaf.go
+sed '1,2d' maize_B73_NAM5.aggregate.gaf | cut -f2 - | \
+                cut -d_ -f1 - > maize_B73_NAM5.aggregate.gaf.genes
+sed '1,2d' maize_B73_NAM5.aggregate.gaf | \
+                cut -f5 - > maize_B73_NAM5.aggregate.gaf.go
 
-paste maize_B73_NAM5.aggregate.gaf.go maize_B73_NAM5.aggregate.gaf.genes | sort | uniq > maize_B73_NAM5.aggregate.GO_gene.gaf
+paste maize_B73_NAM5.aggregate.gaf.go maize_B73_NAM5.aggregate.gaf.genes | \
+                sort | uniq > maize_B73_NAM5.aggregate.GO_gene.gaf
 
 # Compare number of lines once protein isoforms are merged
 wc -l maize_B73_NAM5.aggregate.gaf
@@ -278,9 +281,12 @@ df_GOTERM <- as.data.frame(GOTERM)
 df_GOTERM <- df_GOTERM[,2:7]
 
 # Create a list of dataframe with terms classified by ontology types
-TERM2NAME_BP <- df_GOTERM %>% dplyr::filter(Ontology == "BP") %>% dplyr::select(go_id,Term) %>% unique()
-TERM2NAME_CC <- df_GOTERM %>% dplyr::filter(Ontology == "CC") %>% dplyr::select(go_id,Term) %>% unique()
-TERM2NAME_MF <- df_GOTERM %>% dplyr::filter(Ontology == "MF") %>% dplyr::select(go_id,Term) %>% unique()
+TERM2NAME_BP <- df_GOTERM %>% dplyr::filter(Ontology == "BP") %>%
+    dplyr::select(go_id,Term) %>% unique()
+TERM2NAME_CC <- df_GOTERM %>% dplyr::filter(Ontology == "CC") %>%
+    dplyr::select(go_id,Term) %>% unique()
+TERM2NAME_MF <- df_GOTERM %>% dplyr::filter(Ontology == "MF") %>%
+    dplyr::select(go_id,Term) %>% unique()
 
 # Create a list of dataframe
 TERM2NAME <- list(BP=TERM2NAME_BP, CC=TERM2NAME_CC, MF=TERM2NAME_MF)
@@ -308,9 +314,7 @@ Now we have everything set to perform our first GO term analysis.
 
 # Run GO term enrichment analysis
 
-I created a [go_functions.R](go_functions.R) file that can be sourced in your current R or Rmarkdown file to call the functions needed to run the analysis.
-
-The [go_functions.R](go_functions.R) file contains two R functions:
+I created a [go_functions.R](go_functions.R) file that can be sourced in your current R or Rmarkdown file to call the functions needed to run the analysis. This file contains two R functions:
 
 The function `ego_analysis` performs three GO term analyses, one for each ontology: Biological process (BP), cellular component (CC), and molecular function (MF). One can explicit the wanted ontology when using the function `enrichGO` using the argument "ont" (e.g. `ont="MF"`) but this is not possible when using home-made GO annotation (as we do here for B73 NAM5). In the case of home-made annotation, clusterProfiler provides the function `enrich` but there is no possibility to define what ontology to investigate. I, therefore, split the TERM2NAME object into three separate objects, containing BP, CC, and MF GO terms. The home-made function `ego_analysis` will return a list of ego result objects (class enrichResult) that can be processed further for plotting with for instance the `dotplot` function of the `enrichplot` package (we will see that below). One can also easily turn these "enrichResult" class R objects into classical data frames to perform easy manipulation with `tidyverse` functions.
 
@@ -343,18 +347,20 @@ go_search(method="term2GO", "nucleus")
 1 GO:0005634 nucleus
 ```
 
-Now, let's run our first analysis. You need this GitHub repository and all libraries specified above installed.
+Now, let's run our first analysis.
 
 ```{r}
 # Clone this repository
 git clone https://github.com/johanzi/GOMAP_maize_B73_NAM5.git
+cd GOMAP_maize_B73_NAM5
 
 # Be sure to source the go_functions.R file properly
-source("/path/to/GOMAP_maize_B73_NAM5go_functions.R")
+source("go_functions.R")
 
 # Let's make a vector of all 85 genes annotated with
 # GO ID GO:0019684 (photosynthesis, light reaction)
-geneID_GO0019684 <- GO_analysis_data %>% filter(GO=="GO:0019684") %>% dplyr::select(gene) %>% pull()
+geneID_GO0019684 <- GO_analysis_data %>% filter(GO=="GO:0019684")
+    %>% dplyr::select(gene) %>% pull()
 
 # Run the ego_analysis function providing the vector of geneID argument
 list_ego_results <- ego_analysis(geneID_GO0019684)
