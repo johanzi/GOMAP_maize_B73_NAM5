@@ -3,6 +3,9 @@
 TERM2GENE <-  readRDS("TERM2GENE.rds")
 TERM2NAME <- readRDS("TERM2NAME.rds")
 
+# Gather all Terms for the GO_search function
+TERM2NAME_ALL <- do.call("rbind", TERM2NAME)
+
 # Function to perform ego, provide as argument a vector containing geneID (characters type)
 ego_analysis <- function(vector_geneID){
   
@@ -67,31 +70,34 @@ ego_analysis <- function(vector_geneID){
   
   # Create variable Fold enrichment (GeneRatio / BgRatio)
   ego_final <- lapply(ego_list2, function(x) mutate(x, FoldEnrich = parse_ratio(GeneRatio) / parse_ratio(BgRatio)))
-  
+
+  # Return final list of enrichResult class objects
   return(ego_final)
   
 }
 
-# Additional practical functions to explore clusterProfile enrich output
+# Additional function to explore clusterProfile enrich output
 go_search <- function(method="gene2GO",id){
+  
   if(method=="gene2GO"){
     GO <- TERM2GENE %>% dplyr::filter(gene==id) %>% pull(GO)
-    df <- TERM2NAME$ALL %>% dplyr::filter(go_id %in% GO)
+    df <- TERM2NAME_ALL %>% dplyr::filter(go_id %in% GO)
     return(df)
   }
   
   if(method=="GO2gene"){
-    return(TERM2GENE %>% dplyr::filter(GO==id))
-    #geneID <- TERM2GENE %>% dplyr::filter(GO==id) %>% pull(gene)
-    #print(geneID)
+    df <- TERM2NAME_ALL %>% dplyr::filter(GO==id)
+    return(df)
   }
   
   if(method=="GO2term"){
-    return(TERM2NAME$ALL %>% dplyr::filter(go_id %in% id))
+    df <-TERM2NAME_ALL %>% dplyr::filter(go_id %in% id)
+    return(df)
   }
   
   if(method=="term2GO"){
-    return(TERM2NAME$ALL %>% dplyr::filter(Term %in% id))
+    df <- TERM2NAME$ALL %>% dplyr::filter(Term %in% id)
+    return(df)
   }
   
 }
