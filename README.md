@@ -15,8 +15,8 @@ GO term annotation of the maize B73 NAM5 assembly
     + [Create TERM2NAME object](#create-term2name-object)
     + [Create TERM2GENE object](#create-term2gene-object)
 - [Run GO term enrichment analysis](#run-go-term-enrichment-analysis)
-  * [Authors](#authors)
-  * [License](#license)
+- [Authors](#authors)
+- [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -435,11 +435,11 @@ write_delim(df_ego_analysis_MF, "df_ego_analysis_MF.txt", delim="\t")
 
 Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
 
-## Authors
+# Authors
 
 * **Johan Zicola** - [johanzi](https://github.com/johanzi)
 
-## License
+# License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
