@@ -255,13 +255,12 @@ df_GOTERM <- as.data.frame(GOTERM)
 df_GOTERM <- df_GOTERM[,2:7]
 
 # Create a list of dataframe with terms classified by ontology types
-TERM2NAME_all <- df_GOTERM %>% dplyr::select(go_id,Term) %>% unique()
 TERM2NAME_BP <- df_GOTERM %>% dplyr::filter(Ontology == "BP") %>% dplyr::select(go_id,Term) %>% unique()
 TERM2NAME_CC <- df_GOTERM %>% dplyr::filter(Ontology == "CC") %>% dplyr::select(go_id,Term) %>% unique()
 TERM2NAME_MF <- df_GOTERM %>% dplyr::filter(Ontology == "MF") %>% dplyr::select(go_id,Term) %>% unique()
 
 # Create a list of dataframe
-TERM2NAME <- list(ALL=TERM2NAME_all, BP=TERM2NAME_BP, CC=TERM2NAME_CC, MF=TERM2NAME_MF)
+TERM2NAME <- list(BP=TERM2NAME_BP, CC=TERM2NAME_CC, MF=TERM2NAME_MF)
 
 # Save this R object
 saveRDS(TERM2NAME, "TERM2NAME.rds")
