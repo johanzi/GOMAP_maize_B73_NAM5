@@ -16,9 +16,9 @@ ego_analysis <- function(vector_geneID){
   require(GO.db)
 
   # Keep in each data frames only the defined ontology (BP, CC, or MF)
-  TERM2GENE_BP <- TERM2GENE %>% filter(GO %in% TERM2NAME$BP$go_id)
-  TERM2GENE_CC <- TERM2GENE %>% filter(GO %in% TERM2NAME$CC$go_id)
-  TERM2GENE_MF <- TERM2GENE %>% filter(GO %in% TERM2NAME$MF$go_id)
+  TERM2GENE_BP <- TERM2GENE %>% dplyr::filter(GO %in% TERM2NAME$BP$go_id)
+  TERM2GENE_CC <- TERM2GENE %>% dplyr::filter(GO %in% TERM2NAME$CC$go_id)
+  TERM2GENE_MF <- TERM2GENE %>% dplyr::filter(GO %in% TERM2NAME$MF$go_id)
   
   # Check if all objects are loaded
   if(!exists("TERM2GENE")){stop("TERM2GENE object not loaded")}
@@ -75,23 +75,23 @@ ego_analysis <- function(vector_geneID){
 # Additional practical functions to explore clusterProfile enrich output
 go_search <- function(method="gene2GO",id){
   if(method=="gene2GO"){
-    GO <- TERM2GENE %>% filter(gene==id) %>% pull(GO)
-    df <- TERM2NAME$ALL %>% filter(go_id %in% GO)
+    GO <- TERM2GENE %>% dplyr::filter(gene==id) %>% pull(GO)
+    df <- TERM2NAME$ALL %>% dplyr::filter(go_id %in% GO)
     return(df)
   }
   
   if(method=="GO2gene"){
-    return(TERM2GENE %>% filter(GO==id))
-    #geneID <- TERM2GENE %>% filter(GO==id) %>% pull(gene)
+    return(TERM2GENE %>% dplyr::filter(GO==id))
+    #geneID <- TERM2GENE %>% dplyr::filter(GO==id) %>% pull(gene)
     #print(geneID)
   }
   
   if(method=="GO2term"){
-    return(TERM2NAME$ALL %>% filter(go_id %in% id))
+    return(TERM2NAME$ALL %>% dplyr::filter(go_id %in% id))
   }
   
   if(method=="term2GO"){
-    return(TERM2NAME$ALL %>% filter(Term %in% id))
+    return(TERM2NAME$ALL %>% dplyr::filter(Term %in% id))
   }
   
 }
