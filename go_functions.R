@@ -96,7 +96,7 @@ go_search <- function(method="gene2GO",id){
   }
   
   if(method=="term2GO"){
-    df <- TERM2NAME$ALL %>% dplyr::filter(Term %in% id)
+    df <- TERM2NAME_ALL %>% dplyr::filter(Term %in% id)
     return(df)
   }
   
