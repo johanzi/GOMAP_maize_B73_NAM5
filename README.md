@@ -5,11 +5,11 @@ GO term annotation of the maize B73 NAM5 assembly
 
 I needed to perform GO enrichment analysis on genes targeted by sRNAs in maize before the time a B73 NAM5 GO term annotation was available on [MaizeGDB](https://download.maizegdb.org/GeneFunction_and_Expression/Pannzer_GO_Terms/) in 2022. This annotation was performed using [PANNZER](http://ekhidna2.biocenter.helsinki.fi/sanspanz/), see reference paper [Törönen & Holm, 2022](https://onlinelibrary.wiley.com/doi/full/10.1002/pro.4193). I therefore decided to use the Gene Ontology Meta Annotator for Plants ([GOMAP]([https://bioinformapping.com/gomap/master/RUNNING.htm](https://bioinformapping.com/gomap/master/OVERVIEW.html)) pipeline.
 
-Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493,310 annotations vs 167,519 for PANNZER. Although GOMAP manual recommends running the pipeline on a high-performance cluster (HPC) due to the sheer amount of calculation it needs, the setting of my HPC provider did not allow me to run such a long job. It took my local workstation (10 cores of 2,2 GHz each) about one month to complete the annotation. To save time and energy for others, I provide here the GOMAP annotation for B73 NAM5 with its step-by-step.
+Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493,310 annotations vs 167,519 for PANNZER. Although GOMAP manual recommends running the pipeline on a high-performance cluster (HPC) due to the sheer amount of calculation it needs, the setting of my HPC provider did not allow me to run such a long job. It took my local workstation (10 quad-core processors of 2,2 GHz each) about one month to complete the annotation. To save time and energy for others, I provide here the GOMAP annotation for B73 NAM5 with its step-by-step.
 
 # Requisites
 
-* UNIX-based computer with a decent amount of RAM and cores (mine had 10 x v4 processors of 2.2 GHz each, 63 Gb of RAM, 4 Gb GPU, OS Linux Mint 19.1 Cinnamon)
+* UNIX-based computer with a decent amount of RAM and cores (mine had 10 quad-core processors (40 cores) of 2.2 GHz each, 63 Gb of RAM, 4 Gb GPU, OS Linux Mint 19.1 Cinnamon)
 * Singularity (version 3.6.3 used here
 * GOMAP (version 1.3.5 used here)
 
@@ -119,8 +119,163 @@ input:
 
 Note some important things: 
 * Location of the fasta file, which should be in the same directory as the min-config.yml
-* Your email, needed to run one of the tool (Argot GO)
-* cpus, depends on your workstation, the more, the faster your job will be. Plan anyway a good month to let your machine run if you don't have access to a HPC
+* basename, this will be the prefix (maize_B73_NAM5) of the output gaf (GO annotation file format) file, here `maize_B73_NAM5.aggregate.gaf`
+* Your email, needed to run one of the tools (Argot GO)
+* cpus (=cores), depends on your workstation, the more, the faster your job will be. Plan anyway a good month to let your machine run if you don't have access to an HPC
 
+# GOMAP run
+
+GOMAP runs four independent steps:
+
+1. seqsim
+2. domain
+3. fanngo
+4. mixmeth-blast
+
+Run the 4 first steps in parallel, each using 10 cores (40 cores in total available on my workstation)
+
+After 1-4 steps are finished, the last three steps need to be run consecutively
+5. mixmeth-preproc
+6. mixmeth
+7. aggregate
+
+Here are the commands:
+
+```
+cd /path/to/GOMAP-singularity/
+
+./run-GOMAP-SINGLE.sh --step=seqsim --config=B73_NAM5/min-config.yml
+
+./run-GOMAP-SINGLE.sh --step=domain --config=B73_NAM5/min-config.yml
+
+./run-GOMAP-SINGLE.sh --step=fanngo --config=B73_NAM5/min-config.yml
+
+./run-GOMAP-SINGLE.sh --step=mixmeth-blast --config=B73_NAM5/min-config.yml
+
+./run-GOMAP-SINGLE.sh --step=mixmeth-preproc --config=B73_NAM5/min-config.yml
+
+./run-GOMAP-SINGLE.sh --step=mixmeth --config=B73_NAM5/min-config.yml
+
+./run-GOMAP-SINGLE.sh --step=aggregate --config=B73_NAM5/min-config.yml
+```
+
+# Post-processing
+
+The output file will look like this:
+
+```
+head maize_B73_NAM5.aggregate.gaf
+!gaf-version:2.0
+!db     db_object_id    db_object_symbol        qualifier       term_accession  db_reference    evidence_code   with    aspect  db_object_name  db_object_synonym       db_object_type  taxon   date    assigned_by     annotation_extensiongene_product_form_id
+GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003690      GOMAP:0000      IEA     SMART:SM00733   F                       gene    taxon:4577      20221204        GOMAP-v1.3.9
+GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003727      GOMAP:0000      IEA     RBH:I1IST9      F                       gene    taxon:4577      20221129        GOMAP-v1.3.9
+```
+
+Note that each protein isoforms are annotated but most people usually consider only genes when performing GO term enrichment analyses. Therefore, one must collapse this annotation at the gene level:
+
+```
+# Get protein isoform and GO term
+# Remove 2 first lines (headers)
+sed '1,2d' maize_B73_NAM5.aggregate.gaf | cut -f2 - | cut -d_ -f1 - > maize_B73_NAM5.aggregate.gaf.genes
+sed '1,2d' maize_B73_NAM5.aggregate.gaf | cut -f5 - > maize_B73_NAM5.aggregate.gaf.go
+
+paste maize_B73_NAM5.aggregate.gaf.go maize_B73_NAM5.aggregate.gaf.genes | sort | uniq > maize_B73_NAM5.aggregate.GO_gene.gaf
+
+# Compare number of lines once protein isoforms are merged
+wc -l maize_B73_NAM5.aggregate.gaf
+846030 maize_B73_NAM5.aggregate.gaf
+
+wc -l maize_B73_NAM5.aggregate.GO_gene.gaf
+493310 maize_B73_NAM5.aggregate.GO_gene.gaf
+```
+
+Note the difference, with 846,030 annotations when considering protein isoforms, and 493,310 when collapsed at the gene level. If different protein isoforms of a same gene have different GO terms, the information is kept at the gene level so this way is OK for most people I think.
+
+# GO term enrichment analysis
+
+Now, one can use this gaf file in different softwares performing GO term enrichment analysis. I am personally using [clusterProfile](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html). Here the two publications:
+
+* [Yu et al 2012](https://www.liebertpub.com/doi/10.1089/omi.2011.0118)
+* [Wu et al 2021](https://www.sciencedirect.com/science/article/pii/S2666675821000667?via%3Dihub)
+
+These two resources give nice examples of how to use clusterProfiler: [https://yulab-smu.top/biomedical-knowledge-mining-book/index.html](https://yulab-smu.top/biomedical-knowledge-mining-book/enrichment-overview.html) and [https://guangchuangyu.github.io/2016/01/go-analysis-using-clusterprofiler/]([https://guangchuangyu.github.io/2016/01/go-analysis-using-clusterprofiler/).
+
+I detailed below how to run a GO term analysis using B73 NAM5 gene ID (Zm00000ebXXXXXXX)
+
+## Install clusterProfiler
+
+Get all these libraries clusterProfiler needs:
+
+```{r}
+# Install Bioconductor packages
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager") 
+bioconductor_packages <- c("DOSE","clusterProfiler","enrichplot","AnnotationDbi","GO.db")
+BiocManager::install(bioconductor_packages)
+
+# Install CRAN packages
+cran_packages <- c("tidyverse","readxl","xlsx")
+for (count in 1:length(cran_packages)) install.packages(cran_packages[count])
+
+# Cross fingers and hope everything was installed properly
+library(clusterProfiler)
+library(DOSE)
+library(enrichplot)
+library(xlsx)
+library(readxl)
+library(AnnotationDbi)
+library(GO.db)
+library(tidyverse)
+
+```
+
+## Create TERM2NAME and TERM2GENE R objects
+
+clusterProfiler needs 3 things to work:
+* TERM2NAME data frame, which contains two columns: GO term ID (GO:0009880) and GO description "embryonic pattern specification"
+* A TERM2GENE data frame, which contains two columns: GO term ID (GO:0000001) and B73 NAM5 gene ID "Zm00001eb000800"
+* vector containing the B73 NAM5 gene IDs to be processed into the clusterProfiler function "enrich"
+
+### Prepare TERM2NAME object
+
+Get a summary of all 44,509 GO ID and their terms (http://geneontology.org/docs/GO-term-elements). These are available in the GOTERM object of the AnnotationDbi package.
+
+> Every term has a human-readable term name — e.g. mitochondrion, glucose transmembrane transport, or amino acid binding — and a GO ID, a unique seven digit identifier prefixed by GO:, e.g. GO:0005739, GO:1904659, or GO:0016597
+
+This step is needed to be performed only once and can then be used across any GO analysis and any species.
+
+```{r}
+library(AnnotationDbi)
+
+# Put GOTermsAnnDbBimap object into a dataframe
+df_GOTERM <- as.data.frame(GOTERM)
+
+# Remove first column (otherwise, two redundant column)
+df_GOTERM <- df_GOTERM[,2:7]
+
+# Create a list of dataframe with terms classified by ontology types
+TERM2NAME_all <- df_GOTERM %>% dplyr::select(go_id,Term) %>% unique()
+TERM2NAME_BP <- df_GOTERM %>% dplyr::filter(Ontology == "BP") %>% dplyr::select(go_id,Term) %>% unique()
+TERM2NAME_CC <- df_GOTERM %>% dplyr::filter(Ontology == "CC") %>% dplyr::select(go_id,Term) %>% unique()
+TERM2NAME_MF <- df_GOTERM %>% dplyr::filter(Ontology == "MF") %>% dplyr::select(go_id,Term) %>% unique()
+
+# Create a list of dataframe
+TERM2NAME <- list(ALL=TERM2NAME_all, BP=TERM2NAME_BP, CC=TERM2NAME_CC, MF=TERM2NAME_MF)
+
+# Save this R object
+saveRDS(TERM2NAME, "TERM2NAME.rds")
+
+```
+
+### Prepare TERM2GENE object
+
+We want now to import the output gaf file from GOMAP we modified to contain only geneID.
+
+```{r}
+# Import data in R
+TERM2GENE <- read.delim("maize_B73_NAM5.aggregate.GO_gene.gaf", header=F)
+colnames(TERM2GENE) <- c("GO","gene")
+
+saveRDS(TERM2GENE, "TERM2GENE.rds")
+```
 
 
