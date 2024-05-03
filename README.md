@@ -354,8 +354,12 @@ Now, let's run our first analysis.
 git clone https://github.com/johanzi/GOMAP_maize_B73_NAM5.git
 cd GOMAP_maize_B73_NAM5
 
-# Be sure to source the go_functions.R file properly
+# Source go_functions.R
 source("go_functions.R")
+# Note the chdir=TRUE is needed if you load go_functions.R
+# from outside of the GOMAP_maize_B73_NAM5 directory (otherwise, R will fail
+# to load the two R objects
+source("path/to/go_functions.R", chdir=TRUE)
 
 # Let's make a vector of all 85 genes annotated with
 # GO ID GO:0019684 (photosynthesis, light reaction)
