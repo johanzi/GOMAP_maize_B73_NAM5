@@ -286,9 +286,9 @@ Now we have everything set to perform our first GO term analysis.
 
 # Run GO term enrichment analysis
 
-I created a [go_functions.R] file that can be sourced in your current R or Rmarkdown file to call the functions needed to run the analysis.
+I created a (go_functions.R)[go_functions.R] file that can be sourced in your current R or Rmarkdown file to call the functions needed to run the analysis.
 
-The [go_functions.R] file contains two R functions:
+The (go_functions.R)[go_functions.R] file contains two R functions:
 
 The function `ego_analysis` performs three GO term analyses, one for each ontology: Biological process (BP), cellular component (CC), and molecular function (MF). One can explicit the wanted ontology when using the function `enrichGO` using the argument "ont" (e.g. `ont="MF"`) but this is not possible when using home-made GO annotation (as we do here for B73 NAM5). In the case of home-made annotation, clusterProfiler provides the function `enrich` but there is no possibility to define what ontology to investigate. I, therefore, split the TERM2NAME object into three separate objects, containing BP, CC, and MF GO terms. The home-made function `ego_analysis` will return a list of ego result objects (class enrichResult) that can be processed further for plotting with for instance the `dotplot` function of the `enrichplot` package (we will see that below). One can also easily turn these "ego" objects into data frames to perform manipulation with `tidyverse` functions for instance.
 
@@ -366,7 +366,7 @@ dotplot(ego_analysis$ego_CC,showCategory=10, title="CC")
 dotplot(ego_analysis$ego_MF,showCategory=10, title="MF")
 ```
 
-![](images/GO_analysis_plots.JPG)
+![](GO_analysis_plots.JPG)
 
 Obviously, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term.
 
