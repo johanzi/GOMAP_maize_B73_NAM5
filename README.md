@@ -1,6 +1,26 @@
 # GOMAP_maize_B73_NAM5
 GO term annotation of the maize B73 NAM5 assembly
 
+- [Objectives](#objectives)
+- [Requisites](#requisites)
+- [Install Singularity and go](#install-singularity-and-go)
+- [Install GOMAP](#install-gomap)
+- [Protein sequences of B73 NAM5](#protein-sequences-of-b73-nam5)
+- [Create config file for B73 NAM5](#create-config-file-for-b73-nam5)
+- [GOMAP run](#gomap-run)
+- [Post-processing](#post-processing)
+- [GO term enrichment analysis](#go-term-enrichment-analysis)
+  * [Install clusterProfiler](#install-clusterprofiler)
+  * [Create TERM2NAME and TERM2GENE R objects](#create-term2name-and-term2gene-r-objects)
+    + [Prepare TERM2NAME object](#prepare-term2name-object)
+    + [Prepare TERM2GENE object](#prepare-term2gene-object)
+- [Run GO term enrichment analysis](#run-go-term-enrichment-analysis)
+  * [Authors](#authors)
+  * [License](#license)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 # Objectives
 
 In 2022, I needed to perform GO enrichment analyses on genes targeted by sRNAs in maize but at this time, I could not find any published annotation for B73 NAM5 assembly. Therefore, I have decided to use the Gene Ontology Meta Annotator for Plants ([GOMAP](https://bioinformapping.com/gomap/master/RUNNING.html)) pipeline to make my own GO annotation.
