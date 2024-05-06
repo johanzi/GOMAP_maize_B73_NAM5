@@ -108,5 +108,3 @@ go_search <- function(method="gene2GO",id){
 #go_search(method="GO2term", "GO:0000062")
 #go_search(method="term2GO", "reproduction")
 
-                      
-}
