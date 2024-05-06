@@ -99,7 +99,17 @@ go_search <- function(method="gene2GO",id){
     df <- TERM2NAME_ALL %>% dplyr::filter(Term==id)
     return(df)
   }
- 
+  
+  if(method=="GO2ontology"){
+    if(sum(TERM2NAME$BP$go_id==id)==1){
+      message("BP") } 
+    else if (sum(TERM2NAME$CC$go_id==id)==1){
+      message("CC") } 
+    else if (sum(TERM2NAME$MF$go_id==id)==1){
+      message("MF") } else {
+      message("GO ID not found in any ontology")
+      }
+  }
 }
 
 # Testing examples for go_search function
@@ -107,4 +117,5 @@ go_search <- function(method="gene2GO",id){
 #go_search(method="GO2gene", "GO:0000011")
 #go_search(method="GO2term", "GO:0000062")
 #go_search(method="term2GO", "reproduction")
+#go_search(method="GO2ontology", "GO:0000062")
 
