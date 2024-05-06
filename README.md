@@ -426,15 +426,15 @@ To dig further into the GO enrichment analysis of the three ontologies, one can 
 # Turn list of enrichResult objects into one dataframe
 df_ego_analysis <- enrichResult2dataframe(list_ego_results)
 
-# Keep only significant hit (here I use alpha risk 5%)
-df_ego_analysis_significant <- df_all %>% dplyr::filter(p.adjust < 0.05)
+# Keep only significant hits (here I use alpha risk 5%)
+df_ego_analysis_significant <- df_ego_analysis %>% dplyr::filter(p.adjust < 0.05)
 
 ```
 
 The ontology term (BP, CC, or MF) will be added as the first column. One can then export this data frame as a text file to import in Excel (ribbon Data > import from text) and filter by the header row. This is a convenient option to add the output in Supplementary tables, coming along with GO term plots shown in figures. I find this is a good practice and allows readers to quickly explore the results in Excel.
 
 ```{r}
-write_delim(df_ego_analysis_significant, "df_ego_analysis.txt", delim="\t")
+write_delim(df_ego_analysis_significant, "df_ego_analysis_significant.txt", delim="\t")
 ```
 
 Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
