@@ -79,7 +79,7 @@ singularity version
 
 # Install GOMAP
 
-Once Singularity and Go are installed properly, GOMAP should be easy to install. I used GOMAP v1.3.9 at the same time. Feel free to try with the most recent version at the time you run the pipeline.
+Once Singularity and Go are installed properly, GOMAP should be easy to install. I used GOMAP v1.3.9 at the time but feel free to try with the most recent version at the time you run the pipeline.
 
 ```
 # Clone GOMAP git repository
@@ -354,6 +354,9 @@ go_search(method="GO2term", "GO:0000006")
        go_id                                                  Term
 1 GO:0000006 high-affinity zinc transmembrane transporter activity
 
+# Get me the ontology for GO ID "GO:0000006"
+go_search(method="GO2ontology", "GO:0000006")
+MF
 ```
 
 Now, let's run our first analysis.
