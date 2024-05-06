@@ -439,7 +439,7 @@ write_delim(df_ego_analysis_significant, "df_ego_analysis_significant.txt", deli
 
 Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
 
-# Authors
+# Author
 
 * **Johan Zicola** - [johanzi](https://github.com/johanzi)
 
