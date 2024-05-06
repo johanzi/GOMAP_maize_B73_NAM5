@@ -119,3 +119,41 @@ go_search <- function(method="gene2GO",id){
 #go_search(method="term2GO", "reproduction")
 #go_search(method="GO2ontology", "GO:0000062")
 
+
+# Function to convert list of enrichResult objects into one dataframe
+enrichResult2dataframe <-  function(output_ego_analysis){
+  
+  if(!is.null(output_ego_analysis$ego_BP)){
+    df_BP <- as.data.frame(output_ego_analysis$ego_BP@result)
+    df_BP$ontology <- "BP"
+  }
+  
+  if(!is.null(output_ego_analysis$ego_CC)){
+    df_CC <- as.data.frame(output_ego_analysis$ego_CC@result)
+    df_CC$ontology <- "CC"
+  }
+  
+  if(!is.null(output_ego_analysis$ego_MF)){
+    df_MF <- as.data.frame(output_ego_analysis$ego_MF@result)
+    df_MF$ontology <- "MF"
+  }
+  
+  # Bind all. Use get0 so that there is no error when binding non-existing
+  # data frames
+  df_ego <- rbind(get0("df_BP"), get0("df_CC"), get0("df_MF"))
+  
+  # Check if df_ego contains anything
+  if(!is.null(df_ego)){
+    # Put ontology in first column
+    df_ego <- df_ego %>% dplyr::select(ontology, everything())
+    return(df_ego)
+  } else {
+    message("No ontology contained a significant hit.")
+  }
+}
+
+  
+
+  
+
+

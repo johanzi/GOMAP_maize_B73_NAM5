@@ -420,20 +420,21 @@ Note the difference between GeneRatio and BgRatio, the two variables that are us
 
 Here, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term, so the GeneRatio is 1 (85/85).
 
-To dig further into the GO enrichment analysis of the three ontologies, one can turn it into data frames:
+To dig further into the GO enrichment analysis of the three ontologies, one can turn it into one data frame containing the results for all three ontologies using the home-made function `enrichResult2dataframe` (found in `go_functions.R`):
 
 ```{r}
-df_ego_analysis_BP <- as.data.frame(list_ego_results$ego_BP@result)
-df_ego_analysis_CC <- as.data.frame(list_ego_results$ego_CC@result)
-df_ego_analysis_MF <- as.data.frame(list_ego_results$ego_MF@result)
+# Turn list of enrichResult objects into one dataframe
+df_ego_analysis <- enrichResult2dataframe(list_ego_results)
+
+# Keep only significant hit (here I use alpha risk 5%)
+df_ego_analysis_significant <- df_all %>% dplyr::filter(p.adjust < 0.05)
+
 ```
 
-One can also export these data frames as text files to import in Excel (ribbon Data > import from text). A very convenient option to add the output in Supplementary tables, coming along with GO term plots shown in figures. I find this is a good practice and allows readers to quickly explore the results in Excel.
+The ontology term (BP, CC, or MF) will be added as the first column. One can then export this data frame as a text file to import in Excel (ribbon Data > import from text) and filter by the header row. This is a convenient option to add the output in Supplementary tables, coming along with GO term plots shown in figures. I find this is a good practice and allows readers to quickly explore the results in Excel.
 
 ```{r}
-write_delim(df_ego_analysis_BP, "df_ego_analysis_BP.txt", delim="\t")
-write_delim(df_ego_analysis_CC, "df_ego_analysis_CC.txt", delim="\t")
-write_delim(df_ego_analysis_MF, "df_ego_analysis_MF.txt", delim="\t")
+write_delim(df_ego_analysis_significant, "df_ego_analysis.txt", delim="\t")
 ```
 
 Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
