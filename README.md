@@ -25,7 +25,7 @@ GO term annotation of the maize B73 NAM5 assembly
 
 In 2022, I needed to perform GO enrichment analyses on genes targeted by sRNAs in maize but at this time, I could not find any published annotation for B73 NAM5 assembly. Therefore, I have decided to use the Gene Ontology Meta Annotator for Plants ([GOMAP](https://bioinformapping.com/gomap/master/RUNNING.html)) pipeline to make my own GO annotation.
 
-Just after that during the same year, MaizeGDB finally made available a GO term annotation for B73 NAM5 (available [here](https://download.maizegdb.org/GeneFunction_and_Expression/Pannzer_GO_Terms/). This annotation was performed using [PANNZER](http://ekhidna2.biocenter.helsinki.fi/sanspanz/), see reference paper [Törönen & Holm, 2022](https://onlinelibrary.wiley.com/doi/full/10.1002/pro.4193).
+Just after that during the same year, MaizeGDB finally made available a GO term annotation for B73 NAM5 (available [here](https://download.maizegdb.org/GeneFunction_and_Expression/Pannzer_GO_Terms/)). This annotation was performed using [PANNZER](http://ekhidna2.biocenter.helsinki.fi/sanspanz/), see reference paper [Toronen & Holm, 2022](https://onlinelibrary.wiley.com/doi/full/10.1002/pro.4193).
 
 Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493,310 annotations vs 167,519 for PANNZER. I found results that made sense with GOMAP and decided to stick to this annotation. I would recommend people try both and compare the results, as I have found that using GO term annotations from different pipelines can yield quite different results (at least this was my experience in Arabidopsis). 
 
@@ -100,8 +100,9 @@ export GOMAP_LOC="/path/to/GOMAP-singularity/"
 Download the fasta file containing all annotated peptides from Maize GDB.
 
 ```
-# Download fasta file
-wget https://download.maizegdb.org/Zm-B73-REFERENCE-NAM-5.0/Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
+# Download fasta file and uncompress
+wget https://download.maizegdb.org/Zm-B73-REFERENCE-NAM-5.0/Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa.gz
+gunzip Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa.gz
 
 # Check number of entries
 grep ">" Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa | wc -l
@@ -270,7 +271,7 @@ I have already added the TERM2NAME and TERM2GENE R objects in this GitHub reposi
 
 Get a summary of all 44,509 GO ID and their terms (http://geneontology.org/docs/GO-term-elements). These are available in the GOTERM object of the AnnotationDbi package.
 
-> Every term has a human-readable term name — e.g. mitochondrion, glucose transmembrane transport, or amino acid binding — and a GO ID, a unique seven digit identifier prefixed by GO:, e.g. GO:0005739, GO:1904659, or GO:0016597
+> Every term has a human-readable term name e.g. mitochondrion, glucose transmembrane transport, or amino acid binding and a GO ID, a unique seven digit identifier prefixed by GO:, e.g. GO:0005739, GO:1904659, or GO:0016597
 
 This step must be performed only once and the TERM2NAME R object is the same for any GO annotation file of any species.
 

@@ -77,7 +77,7 @@ ego_analysis <- function(vector_geneID){
 }
 
 # Additional function to explore clusterProfile enrich output
-go_search <- function(method="gene2GO",id){
+go_search <- function(method=c("gene2GO","GO2gene","GO2term","term2GO","GO2ontology"),id){
   
   if(method=="gene2GO"){
     GO <- TERM2GENE %>% dplyr::filter(gene==id) %>% pull(GO)
@@ -151,9 +151,3 @@ enrichResult2dataframe <-  function(output_ego_analysis){
     message("No ontology contained a significant hit.")
   }
 }
-
-  
-
-  
-
-
