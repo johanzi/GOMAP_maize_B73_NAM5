@@ -31,6 +31,11 @@ Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493
 
 Although the GOMAP manual recommends running the pipeline on a high-performance cluster (HPC) due to high computational requirements, I ran the pipeline locally, and it took my workstation (10 quad-core processors of 2,2 GHz each) about one month to complete the annotation. Here I describe the GOMAP annotation pipeline I used and how I processed the output in R to perform GO enrichment analyses.
 
+In addition, the group of Carolyn Lawrence-Dill at Iowa State University published the GOMAP annotation for all 26 NAM founders in [Fattel et al., 2024](https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-023-06668-6#Sec3). Their B73 NAM5 annotation contains 455,527 annotations, compared to 493,310 for me. This difference is likely due to the fact that they used only the longest transcript for each gene (ending up with 39,756 peptide sequences to analyze compared 72,539 for me). This step halved the number of sequence processed and therefore the computing time but 37,783 (493,310-455,527) annotations were lost. I would therefore recommend to compare both annotations and decide for yourself. The gaf file for their annotation can be downloaded [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output). 
+
+One additional value of this repository is that it provides a detailed protocol on how to perform GO term enrichment analysis using GOMAP output and the R package clusterProfiler.
+
+
 # Software
 
 * UNIX-based computer with a decent amount of RAM and cores (mine had 10 quad-core processors (40 cores) of 2.2 GHz each, 63 Gb of RAM, 4 Gb GPU, OS Linux Mint 19.1 Cinnamon)
@@ -223,7 +228,7 @@ Note the difference, with 846,030 annotations when considering protein isoforms,
 
 # Perform GO term enrichment analysis
 
-Now, one can use this gaf file in different softwares performing GO term enrichment analysis. I am personally using [clusterProfile](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html). Here the two publications:
+Now, one can use this gaf file in different softwares performing GO term enrichment analysis. I am personally using [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html). Here the two publications:
 
 * [Yu et al 2012](https://www.liebertpub.com/doi/10.1089/omi.2011.0118)
 * [Wu et al 2021](https://www.sciencedirect.com/science/article/pii/S2666675821000667?via%3Dihub)
