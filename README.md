@@ -31,7 +31,7 @@ Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493
 
 Although the GOMAP manual recommends running the pipeline on a high-performance cluster (HPC) due to high computational requirements, I ran the pipeline locally, and it took my workstation (10 quad-core processors of 2,2 GHz each) about one month to complete the annotation. Here I describe the GOMAP annotation pipeline I used and how I processed the output in R to perform GO enrichment analyses.
 
-In addition, the group of Carolyn Lawrence-Dill at Iowa State University published the GOMAP annotation for all 26 NAM founders in [Fattel et al., 2024](https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-023-06668-6#Sec3). Their B73 NAM5 annotation contains 455,527 annotations, compared to 493,310 for me. This difference is likely due to the fact that they used only the longest transcript for each gene (ending up with 39,756 peptide sequences to analyze compared 72,539 for me). This step halved the number of sequence processed and therefore the computing time but 37,783 (493,310-455,527) annotations were lost. I would therefore recommend to compare both annotations and decide for yourself. The gaf file for their annotation can be downloaded [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output). 
+In addition, the group of Carolyn Lawrence-Dill at Iowa State University published the GOMAP annotation for all 26 NAM founders in [Fattel et al., 2024](https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-023-06668-6#Sec3). Their B73 NAM5 annotation contains 455,527 annotations, compared to 493,310 for me. This difference is likely due to the fact that they used only the longest transcript for each gene (ending up with 39,756 peptide sequences to analyze compared 72,539 for me). This step halved the number of sequences processed and therefore the computing time but 37,783 (493,310-455,527) annotations were lost. I would therefore recommend to compare both annotations and decide for yourself. The gaf file for their annotation can be downloaded [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output). 
 
 One additional value of this repository is that it provides a detailed protocol on how to perform GO term enrichment analysis using GOMAP output and the R package clusterProfiler.
 
@@ -315,6 +315,30 @@ TERM2GENE <- read.delim("maize_B73_NAM5.aggregate.GO_gene.gaf", header=F)
 colnames(TERM2GENE) <- c("GO","gene")
 
 saveRDS(TERM2GENE, "TERM2GENE.rds")
+```
+
+Do the same for the published annotation from [Fattel et al 2024](https://doi.org/10.1186/s13104-023-06668-6) and create a second `TERM2GENE.rds` object called `TERM2GENE_Fattel_2024.rds`. To use this file, you can change in `go_functions.R` `TERM2NAME <- readRDS("TERM2NAME.rds")` to `TERM2NAME <- readRDS("TERM2GENE_Fattel_2024.rds")`.
+
+
+Download `1.1_GOMAP-output.gaf` from [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output).
+
+```
+sed '1,2d' 1.1_GOMAP-output.gaf | cut -f2 - | \
+                cut -d_ -f1 - > 1.1_GOMAP-output.gaf.genes
+sed '1,2d' 1.1_GOMAP-output.gaf | \
+                cut -f5 - > 1.1_GOMAP-output.gaf.go
+
+paste 1.1_GOMAP-output.gaf.go 1.1_GOMAP-output.gaf.genes | \
+                sort | uniq > 1.1_GOMAP-output.aggregate.GO_gene.gaf
+```
+
+
+```{r}
+# Import data in R
+TERM2GENE <- read.delim("1.1_GOMAP-output.aggregate.GO_gene.gaf", header=F)
+colnames(TERM2GENE) <- c("GO","gene")
+
+saveRDS(TERM2GENE, "TERM2GENE_Fattel_2024.rds")
 ```
 
 That's it!
