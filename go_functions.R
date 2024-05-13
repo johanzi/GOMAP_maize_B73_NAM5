@@ -1,7 +1,8 @@
 
 # Objects needed for GO analysis
-TERM2GENE <-  readRDS("TERM2GENE.rds")
 TERM2NAME <- readRDS("TERM2NAME.rds")
+#TERM2GENE <-  readRDS("TERM2GENE.rds")
+TERM2GENE <- readRDS("TERM2GENE_Fattel_2024.rds")
 
 # Gather all Terms for the GO_search function
 TERM2NAME_ALL <- do.call("rbind", TERM2NAME)

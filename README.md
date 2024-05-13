@@ -317,7 +317,7 @@ colnames(TERM2GENE) <- c("GO","gene")
 saveRDS(TERM2GENE, "TERM2GENE.rds")
 ```
 
-Do the same for the published annotation from [Fattel et al 2024](https://doi.org/10.1186/s13104-023-06668-6) and create a second `TERM2GENE.rds` object called `TERM2GENE_Fattel_2024.rds`. To use this file, you can change in `go_functions.R` `TERM2NAME <- readRDS("TERM2NAME.rds")` to `TERM2NAME <- readRDS("TERM2GENE_Fattel_2024.rds")`.
+Do the same for the published annotation from [Fattel et al 2024](https://doi.org/10.1186/s13104-023-06668-6) and create a second `TERM2GENE.rds` object called `TERM2GENE_Fattel_2024.rds`. To use this file, to quote (#) `TERM2GENE <- readRDS("TERM2GENE_Fattel_2024.rds")` and unquote `TERM2GENE <- readRDS("TERM2GENE_Fattel_2024.rds")` in `go_functions.R`.
 
 
 Download `1.1_GOMAP-output.gaf` from [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output).
