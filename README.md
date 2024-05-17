@@ -31,7 +31,7 @@ Both PANNZER and GOMAP annotated 39,756 genes. However, GOMAP could generate 493
 
 Although the GOMAP manual recommends running the pipeline on a high-performance cluster (HPC) due to high computational requirements, I ran the pipeline locally, and it took my workstation (10 quad-core processors of 2,2 GHz each) about one month to complete the annotation. Here I describe the GOMAP annotation pipeline I used and how I processed the output in R to perform GO enrichment analyses.
 
-In addition, the group of Carolyn Lawrence-Dill at Iowa State University published the GOMAP annotation for all 26 NAM founders in [Fattel et al., 2024](https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-023-06668-6#Sec3). Their B73 NAM5 annotation contains 455,527 annotations, compared to 493,310 for me. This difference is likely due to the fact that they used only the longest transcript for each gene (ending up with 39,756 peptide sequences to analyze compared 72,539 for me). This step halved the number of sequences processed and therefore the computing time but 37,783 (493,310-455,527) annotations were lost. I would therefore recommend to compare both annotations and decide for yourself. The gaf file for their annotation can be downloaded [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output). 
+In addition, the group of Carolyn Lawrence-Dill at Iowa State University published the GOMAP annotation for all 26 NAM founders in [Fattel et al., 2024](https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-023-06668-6#Sec3). Their B73 NAM5 annotation contains 455,527 annotations, compared to 493,310 for me. This difference is likely due to the fact that they used only the longest transcript for each gene (ending up with 39,756 peptide sequences to analyze compared 72,539 for me). This step halved the number of sequences processed and therefore the computing time but 37,783 (493,310-455,527) annotations were lost. I would therefore recommend to compare both annotations and decide for yourself. The gaf file for their annotation can be downloaded [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output). I also provide a ready-to-go R object in this repository so no need to download it.
 
 One additional value of this repository is that it provides a detailed protocol on how to perform GO term enrichment analysis using GOMAP output and the R package clusterProfiler.
 
@@ -468,6 +468,24 @@ write_delim(df_ego_analysis_significant, "df_ego_analysis_significant.txt", deli
 ```
 
 Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
+
+
+# Process clusterProfiler output in Revigo
+
+It is sometimes difficult to interpret GO term enrichment analysis plot because of the redundancy between terms. The webtool [Revigo](http://revigo.irb.hr/) provides different ways to visualize the GO enrichment results. See details in [Supek et al., 2011](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0021800). The online tool requires two things: a GO term and its associated adjusted p-value.
+
+You can easily retrieved this from the dataframe `df_ego_analysis_significant` you created above:
+
+```{r}
+# Select only GO term ID and adjusted pvalue
+df_ego_analysis_significant_revigo <- df_ego_analysis_significant %>% dplyr::select(ID, p.adjust)
+
+# Export the new dataframe into a text file
+write_delim(df_ego_analysis_significant_revigo, "df_ego_analysis_significant_revigo.txt", delim="\t", col_names = F)
+```
+
+Then just copy-paste the content of `df_ego_analysis_significant_revigo.txt` in [Revigo](http://revigo.irb.hr/) and choose the species (here Zea mays (4577)). 
+
 
 # Author
 
