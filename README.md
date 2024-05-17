@@ -15,11 +15,11 @@ GO term annotation of the maize B73 NAM5 assembly
     + [Create TERM2NAME object](#create-term2name-object)
     + [Create TERM2GENE object](#create-term2gene-object)
 - [Run GO term enrichment analysis](#run-go-term-enrichment-analysis)
-- [Authors](#authors)
+- [Process clusterProfiler output in Revigo](#process-clusterprofiler-output-in-revigo)
+- [Author](#author)
 - [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 
 # Objectives
 
