@@ -438,23 +438,28 @@ Here, the 10 most significant terms are displayed and sorted by decreasing GeneR
 
 ![](GO_analysis_plots.JPG)
 
+
+Here, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term, so the GeneRatio is 1 (85/85).
+
 By default, `dotplot` displays the GeneRatio but one can also choose to display the BgRatio, richFactor, or FoldEnrich by using the x argument. E.g. `dotplot(list_ego_results$ego_BP, x="FoldEnrich", showCategory=10, title="BP")`.
 
-Here a reminder of what are these variables:
+Here a definition of these variables:
 
 * GeneRatio (gene ratio): Number of input genes compared to all input genes analyzed (k/n)
-* BgRatio (background ratio): Number of genes in a given GO term compared to all annotated genes ()
+* BgRatio (background ratio): Number of genes in a given GO term compared to all annotated genes (M/N)
 * richFactor (enrichment factor): Number of input genes compared to total number of genes annotated for a given GO term (k/M)
 * FoldEnrich (fold enrichment): Enrichment of the term in your input gene list as compared to the background population of genes for a given GO term (GeneRatio/BgRatio)
 
-k = Number of my genes of interest found for a given GO term
-n = All genes used as input in the GO term enrichment analysis
-M = Total number of genes annotated within a given GO term
-N = Total number of genes annotated for a given genome (e.g. 39,756 genes for maize here)
+
+Abbreviations:
+
+- k = Number of my genes of interest found for a given GO term
+- n = All genes used as input in the GO term enrichment analysis
+- M = Total number of genes annotated within a given GO term
+- N = Total number of genes annotated for a given genome (e.g. 39,756 genes for maize here)
 
 Note that richFactor and FoldEnrich are completely correlated so the only difference on the plot would be the values of the x-axis.
 
-Here, the term "GO:0019684 (photosynthesis, light reaction)" is the strongest signal since we selected all 85 genes annotated with this term, so the GeneRatio is 1 (85/85).
 
 To dig further into the GO enrichment analysis of the three ontologies, one can turn it into one data frame containing the results for all three ontologies using the home-made function `enrichResult2dataframe` (found in `go_functions.R`):
 
