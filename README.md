@@ -479,19 +479,12 @@ write_delim(df_ego_analysis_significant, "df_ego_analysis_significant.txt", deli
 ```
 
 
-One can also retrieve the genes from the data frame for a given GO term:
+One can also retrieve the genes from the data frame for a given GO term. This command will generate a vector that can be exported as text file for further processing:
 
 ```{r}
 gene_GO0009695 <- df_ego_analysis_significant %>% filter(ID=="GO:0009695") %>% 
         dplyr::select(geneID) %>% str_split("/") %>% unlist()
-```
 
-This command will generate a vector that can be exported as text file for further processing.
-
-```{r}
-write(gene_GO0009695 <- df_ego_analysis_significant %>% filter(ID=="GO:0009695") %>% 
-        dplyr::select(geneID) %>% str_split("/") %>% unlist()
-        
 # Export as text file
 data.table::fwrite(list(gene_GO0009695), "gene_GO0009695.txt")
 ```
