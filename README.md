@@ -458,7 +458,7 @@ Abbreviations:
 - M = Total number of genes annotated within a given GO term
 - N = Total number of genes annotated for a given genome (e.g. 39,756 genes for maize here)
 
-Note that richFactor and FoldEnrich are completely correlated so the only difference on the plot would be the values of the x-axis.
+Note that richFactor and FoldEnrich are proportional so the only difference on the plot would be the values of the x-axis.
 
 
 To dig further into the GO enrichment analysis of the three ontologies, one can turn it into one data frame containing the results for all three ontologies using the home-made function `enrichResult2dataframe` (found in `go_functions.R`):
@@ -478,8 +478,23 @@ The ontology term (BP, CC, or MF) will be added as the first column. One can the
 write_delim(df_ego_analysis_significant, "df_ego_analysis_significant.txt", delim="\t")
 ```
 
-Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
 
+One can also retrieve the genes from the data frame for a given GO term:
+
+```{r}
+gene_GO0009695 <- df_ego_analysis_significant %>% filter(ID=="GO:0009695") %>% 
+        dplyr::select(geneID) %>% str_split("/") %>% unlist()
+```
+
+This command will generate a vector that can be exported as text file for further processing.
+
+```{r}
+write(gene_GO0009695 <- df_ego_analysis_significant %>% filter(ID=="GO:0009695") %>% 
+        dplyr::select(geneID) %>% str_split("/") %>% unlist()
+        
+# Export as text file
+data.table::fwrite(list(gene_GO0009695), "gene_GO0009695.txt")
+```
 
 # Process clusterProfiler output in Revigo
 
@@ -489,14 +504,17 @@ You can easily retrieved this from the dataframe `df_ego_analysis_significant` y
 
 ```{r}
 # Select only GO term ID and adjusted pvalue
-df_ego_analysis_significant_revigo <- df_ego_analysis_significant %>% dplyr::select(ID, p.adjust)
+df_ego_analysis_significant_revigo <- df_ego_analysis_significant %>%
+  dplyr::select(ID, p.adjust)
 
 # Export the new dataframe into a text file
-write_delim(df_ego_analysis_significant_revigo, "df_ego_analysis_significant_revigo.txt", delim="\t", col_names = F)
+write_delim(df_ego_analysis_significant_revigo, 
+  "df_ego_analysis_significant_revigo.txt", delim="\t", col_names = F)
 ```
 
 Then just copy-paste the content of `df_ego_analysis_significant_revigo.txt` in [Revigo](http://revigo.irb.hr/) and choose the species (here Zea mays (4577)). 
 
+Here it is, the end of the pipeline. I hope this will save time for others who struggle finding a GO term annotation and a straightforward way to visualize GO term enrichment analysis results.
 
 # Author
 
