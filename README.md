@@ -1,7 +1,7 @@
 GOMAP_maize_B73_NAM5
 ================
 Johan Zicola
-2024-12-11 16:26:38
+2024-12-11 16:39:03
 
 - [Objectives](#objectives)
 - [Software](#software)
@@ -98,38 +98,40 @@ and see if you need to go through the hard way (below) or not. I put the
 script I used here but you may try an easier way and you will have to
 adjust some variables.
 
-    sudo apt-get update && \
-    sudo apt-get install -y build-essential \
-    libseccomp-dev pkg-config squashfs-tools cryptsetup
+``` bash
+sudo apt-get update && \
+sudo apt-get install -y build-essential \
+libseccomp-dev pkg-config squashfs-tools cryptsetup
 
-    sudo rm -r /usr/local/go
+sudo rm -r /usr/local/go
 
-    export VERSION=1.13.15 OS=linux ARCH=amd64  # change this as you need
+export VERSION=1.13.15 OS=linux ARCH=amd64  # change this as you need
 
-    wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
-    sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
+wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
+sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
 
-    echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
-    echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
-    source ~/.bashrc
+echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
+echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+source ~/.bashrc
 
-    curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh |
-    sh -s -- -b $(go env GOPATH)/bin v1.21.0
+curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh |
+sh -s -- -b $(go env GOPATH)/bin v1.21.0
 
-    mkdir -p ${GOPATH}/src/github.com/sylabs && \
-    cd ${GOPATH}/src/github.com/sylabs && \
-    git clone https://github.com/sylabs/singularity.git && \
-    cd singularity
+mkdir -p ${GOPATH}/src/github.com/sylabs && \
+cd ${GOPATH}/src/github.com/sylabs && \
+git clone https://github.com/sylabs/singularity.git && \
+cd singularity
 
-    git checkout v3.6.3
+git checkout v3.6.3
 
-    cd ${GOPATH}/src/github.com/sylabs/singularity && \
-    ./mconfig && \
-    cd ./builddir && \
-    make && \
-    sudo make install
+cd ${GOPATH}/src/github.com/sylabs/singularity && \
+./mconfig && \
+cd ./builddir && \
+make && \
+sudo make install
 
-    singularity version
+singularity version
+```
 
 # Install GOMAP
 
@@ -137,60 +139,69 @@ Once Singularity and Go are installed properly, GOMAP should be easy to
 install. I used GOMAP v1.3.9 at the time but feel free to try with the
 most recent version at the time you run the pipeline.
 
-    # Clone GOMAP git repository
-    git clone https://github.com/Dill-PICL/GOMAP-singularity.git
-    cd GOMAP-singularity
-    git checkout v1.3.9
+``` bash
+# Clone GOMAP git repository
+git clone https://github.com/Dill-PICL/GOMAP-singularity.git
+cd GOMAP-singularity
+git checkout v1.3.9
 
-    # Add this to your ~/.bashrc or run the line in the terminal
-    export GOMAP_LOC="/path/to/GOMAP-singularity/"
+# Add this to your ~/.bashrc or run the line in the terminal
+export GOMAP_LOC="/path/to/GOMAP-singularity/"
 
-    # Check if GOMAP runs
-    ./test.sh
+# Check if GOMAP runs
+./test.sh
+```
 
 # Prepare protein sequences of B73 NAM5
 
 Download the fasta file containing all annotated peptides from Maize
 GDB.
 
-    # Download fasta file and uncompress
-    wget https://download.maizegdb.org/Zm-B73-REFERENCE-NAM-5.0/Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa.gz
-    gunzip Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa.gz
+``` bash
+# Download fasta file and uncompress
+wget https://download.maizegdb.org/Zm-B73-REFERENCE-NAM-5.0/Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa.gz
+gunzip Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa.gz
 
-    # Check number of entries
-    grep ">" Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa | wc -l
-    72539
+# Check number of entries
+grep ">" Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa | wc -l
+72539
 
-    # Remove all asterisks ending sequences (would create a bug in GOMAP)
-    sed -i 's/\*//' Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
+# Remove all asterisks ending sequences (would create a bug in GOMAP)
+sed -i 's/\*//' Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
+```
 
 # Create a GOMAP configuration file
 
 GOMAP requires a configuration file called `min-config.yml` to run. I
 downloaded a template from the gomap developers and tweaked it a bit.
 
-    # Get config file for that job
-    wget --no-check-certificate https://bioinformapping.com/gomap/master/_static/min-config.yml min-config.yml.1
+``` bash
+# Get config file for that job
+wget --no-check-certificate https://bioinformapping.com/gomap/master/_static/min-config.yml \
+min-config.yml.1
+```
 
 I changed the variables to get this:
 
-    input:
-      #input fasta file name
-      fasta: Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
-      # output file basename
-      basename: maize_B73_NAM5
-      #input NCBI taxonomy id
-      taxon: "4577"
-      # Name of the species
-      species: "Zea mays"
-      # Email is mandatory
-      email: your_email@gmail.com
-      #Number of CPUs used for tools
-      cpus: 10
-      #Whether mpi should be used (mpich-3.2.1  is default)
-      mpi: False
-      #what the name of the 
-      tmpdir: "/tmp"
+``` bash
+input:
+  #input fasta file name
+  fasta: Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
+  # output file basename
+  basename: maize_B73_NAM5
+  #input NCBI taxonomy id
+  taxon: "4577"
+  # Name of the species
+  species: "Zea mays"
+  # Email is mandatory
+  email: your_email@gmail.com
+  #Number of CPUs used for tools
+  cpus: 10
+  #Whether mpi should be used (mpich-3.2.1  is default)
+  mpi: False
+  #what the name of the 
+  tmpdir: "/tmp"
+```
 
 Note some important things: \* Location of the fasta file, which should
 be in the same directory as the min-config.yml \* basename, this will be
@@ -217,54 +228,60 @@ consecutively 5. mixmeth-preproc 6. mixmeth 7. aggregate
 
 Here are the commands:
 
-    cd /path/to/GOMAP-singularity/
-    # Be sure to have Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
-    # and min-config.yml in this directory
+``` bash
+cd /path/to/GOMAP-singularity/
+# Be sure to have Zm-B73-REFERENCE-NAM-5.0_Zm00001eb.1.protein.fa
+# and min-config.yml in this directory
 
-    ./run-GOMAP-SINGLE.sh --step=seqsim --config=min-config.yml
+./run-GOMAP-SINGLE.sh --step=seqsim --config=min-config.yml
 
-    ./run-GOMAP-SINGLE.sh --step=domain --config=min-config.yml
+./run-GOMAP-SINGLE.sh --step=domain --config=min-config.yml
 
-    ./run-GOMAP-SINGLE.sh --step=fanngo --config=min-config.yml
+./run-GOMAP-SINGLE.sh --step=fanngo --config=min-config.yml
 
-    ./run-GOMAP-SINGLE.sh --step=mixmeth-blast --config=min-config.yml
+./run-GOMAP-SINGLE.sh --step=mixmeth-blast --config=min-config.yml
 
-    ./run-GOMAP-SINGLE.sh --step=mixmeth-preproc --config=min-config.yml
+./run-GOMAP-SINGLE.sh --step=mixmeth-preproc --config=min-config.yml
 
-    ./run-GOMAP-SINGLE.sh --step=mixmeth --config=min-config.yml
+./run-GOMAP-SINGLE.sh --step=mixmeth --config=min-config.yml
 
-    ./run-GOMAP-SINGLE.sh --step=aggregate --config=min-config.yml
+./run-GOMAP-SINGLE.sh --step=aggregate --config=min-config.yml
+```
 
 # Post-processing of the output file
 
 The output file will look like this:
 
-    head maize_B73_NAM5.aggregate.gaf
-    !gaf-version:2.0
-    !db     db_object_id    db_object_symbol        qualifier       term_accession  db_reference    evidence_code   with    aspect  db_object_name  db_object_synonym       db_object_type  taxon   date    assigned_by     annotation_extensiongene_product_form_id
-    GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003690      GOMAP:0000      IEA     SMART:SM00733   F                       gene    taxon:4577      20221204        GOMAP-v1.3.9
-    GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003727      GOMAP:0000      IEA     RBH:I1IST9      F                       gene    taxon:4577      20221129        GOMAP-v1.3.9
+``` bash
+head maize_B73_NAM5.aggregate.gaf
+!gaf-version:2.0
+!db     db_object_id    db_object_symbol        qualifier       term_accession  db_reference    evidence_code   with    aspect  db_object_name  db_object_synonym       db_object_type  taxon   date    assigned_by     annotation_extensiongene_product_form_id
+GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003690      GOMAP:0000      IEA     SMART:SM00733   F                       gene    taxon:4577      20221204        GOMAP-v1.3.9
+GOMAP   Zm00001eb000010_P001    Zm00001eb000010_P001            GO:0003727      GOMAP:0000      IEA     RBH:I1IST9      F                       gene    taxon:4577      20221129        GOMAP-v1.3.9
+```
 
 Note that each protein isoforms are annotated but people usually
 consider only genes when performing GO term enrichment analyses.
 Therefore, one must collapse this annotation at the gene level:
 
-    # Get protein isoform and GO term
-    # Remove 2 first lines (headers)
-    sed '1,2d' maize_B73_NAM5.aggregate.gaf | cut -f2 - | \
-                    cut -d_ -f1 - > maize_B73_NAM5.aggregate.gaf.genes
-    sed '1,2d' maize_B73_NAM5.aggregate.gaf | \
-                    cut -f5 - > maize_B73_NAM5.aggregate.gaf.go
+``` bash
+# Get protein isoform and GO term
+# Remove 2 first lines (headers)
+sed '1,2d' maize_B73_NAM5.aggregate.gaf | cut -f2 - | \
+                cut -d_ -f1 - > maize_B73_NAM5.aggregate.gaf.genes
+sed '1,2d' maize_B73_NAM5.aggregate.gaf | \
+                cut -f5 - > maize_B73_NAM5.aggregate.gaf.go
 
-    paste maize_B73_NAM5.aggregate.gaf.go maize_B73_NAM5.aggregate.gaf.genes | \
-                    sort | uniq > maize_B73_NAM5.aggregate.GO_gene.gaf
+paste maize_B73_NAM5.aggregate.gaf.go maize_B73_NAM5.aggregate.gaf.genes | \
+                sort | uniq > maize_B73_NAM5.aggregate.GO_gene.gaf
 
-    # Compare number of lines once protein isoforms are merged
-    wc -l maize_B73_NAM5.aggregate.gaf
-    846030 maize_B73_NAM5.aggregate.gaf
+# Compare number of lines once protein isoforms are merged
+wc -l maize_B73_NAM5.aggregate.gaf
+846030 maize_B73_NAM5.aggregate.gaf
 
-    wc -l maize_B73_NAM5.aggregate.GO_gene.gaf
-    493310 maize_B73_NAM5.aggregate.GO_gene.gaf
+wc -l maize_B73_NAM5.aggregate.GO_gene.gaf
+493310 maize_B73_NAM5.aggregate.GO_gene.gaf
+```
 
 Note the difference, with 846,030 annotations when considering protein
 isoforms, and 493,310 when collapsed at the gene level. If different
@@ -389,19 +406,20 @@ Do the same for the published annotation from [Fattel et al
 2024](https://doi.org/10.1186/s13104-023-06668-6) and create a second
 `TERM2GENE.rds` object called `TERM2GENE_Fattel_2024.rds`. To use this
 file, to quote (#) `TERM2GENE <- readRDS("TERM2GENE_Fattel_2024.rds")`
-and unquote `TERM2GENE <- readRDS("TERM2GENE_Fattel_2024.rds")` in
-`go_functions.R`.
+and unquote `TERM2GENE <- readRDS("TERM2GENE_Fattel_2024.rds")` in .
 
 Download `1.1_GOMAP-output.gaf` from
 [here](https://datacommons.cyverse.org/browse/iplant/home/shared/commons_repo/curated/Carolyn_Lawrence_Dill_GOMAP_Maize_MaizeGDB_B73_NAM_5.0_October_2022_v2.r1/1_GOMAP-output).
 
-    sed '1,2d' 1.1_GOMAP-output.gaf | cut -f2 - | \
-                    cut -d_ -f1 - > 1.1_GOMAP-output.gaf.genes
-    sed '1,2d' 1.1_GOMAP-output.gaf | \
-                    cut -f5 - > 1.1_GOMAP-output.gaf.go
+``` bash
+sed '1,2d' 1.1_GOMAP-output.gaf | cut -f2 - | \
+                cut -d_ -f1 - > 1.1_GOMAP-output.gaf.genes
+sed '1,2d' 1.1_GOMAP-output.gaf | \
+                cut -f5 - > 1.1_GOMAP-output.gaf.go
 
-    paste 1.1_GOMAP-output.gaf.go 1.1_GOMAP-output.gaf.genes | \
-                    sort | uniq > 1.1_GOMAP-output.aggregate.GO_gene.gaf
+paste 1.1_GOMAP-output.gaf.go 1.1_GOMAP-output.gaf.genes | \
+                sort | uniq > 1.1_GOMAP-output.aggregate.GO_gene.gaf
+```
 
 ``` r
 # Import data in R
@@ -441,39 +459,41 @@ The function `go_search` is a practical tool to find correspondences
 between gene ID, GO ID, and a GO term name. Little examples are worth
 lengthy explanations:
 
-    # Get me all GO ID matching the maize gene Zm00001eb000690
-    head(go_search(method="gene2GO", "Zm00001eb000690"))
-           go_id                                                          Term
-    1 GO:0000976 transcription regulatory region sequence-specific DNA binding
-    2 GO:0003700                     DNA-binding transcription factor activity
-    3 GO:0005634                                                       nucleus
-    4 GO:0006351                                  transcription, DNA-templated
-    5 GO:0006355                    regulation of transcription, DNA-templated
-    6 GO:0008289                                                 lipid binding
+``` bash
+# Get me all GO ID matching the maize gene Zm00001eb000690
+head(go_search(method="gene2GO", "Zm00001eb000690"))
+       go_id                                                          Term
+1 GO:0000976 transcription regulatory region sequence-specific DNA binding
+2 GO:0003700                     DNA-binding transcription factor activity
+3 GO:0005634                                                       nucleus
+4 GO:0006351                                  transcription, DNA-templated
+5 GO:0006355                    regulation of transcription, DNA-templated
+6 GO:0008289                                                 lipid binding
 
-    # Get me all maize genes being annotated with the GO ID GO:0003700
-    head(go_search(method="GO2gene","GO:0003700"))
-              GO            gene
-    1 GO:0003700 Zm00001eb000210
-    2 GO:0003700 Zm00001eb000470
-    3 GO:0003700 Zm00001eb000690
-    4 GO:0003700 Zm00001eb001210
-    5 GO:0003700 Zm00001eb001460
-    6 GO:0003700 Zm00001eb001550
+# Get me all maize genes being annotated with the GO ID GO:0003700
+head(go_search(method="GO2gene","GO:0003700"))
+          GO            gene
+1 GO:0003700 Zm00001eb000210
+2 GO:0003700 Zm00001eb000470
+3 GO:0003700 Zm00001eb000690
+4 GO:0003700 Zm00001eb001210
+5 GO:0003700 Zm00001eb001460
+6 GO:0003700 Zm00001eb001550
 
-    # Get the GO ID for the term description "nucleus"
-    go_search(method="term2GO", "nucleus")
-           go_id    Term
-    1 GO:0005634 nucleus
+# Get the GO ID for the term description "nucleus"
+go_search(method="term2GO", "nucleus")
+       go_id    Term
+1 GO:0005634 nucleus
 
-    # Get me the term description for GO ID "GO:0000006"
-    go_search(method="GO2term", "GO:0000006")
-           go_id                                                  Term
-    1 GO:0000006 high-affinity zinc transmembrane transporter activity
+# Get me the term description for GO ID "GO:0000006"
+go_search(method="GO2term", "GO:0000006")
+       go_id                                                  Term
+1 GO:0000006 high-affinity zinc transmembrane transporter activity
 
-    # Get me the ontology for GO ID "GO:0000006"
-    go_search(method="GO2ontology", "GO:0000006")
-    MF
+# Get me the ontology for GO ID "GO:0000006"
+go_search(method="GO2ontology", "GO:0000006")
+MF
+```
 
 Now, let’s run our first analysis.
 
