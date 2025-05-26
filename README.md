@@ -1,7 +1,7 @@
 GOMAP_maize_B73_NAM5
 ================
 Johan Zicola
-2024-12-11 16:39:03
+2025-05-26 11:12:51
 
 - [Objectives](#objectives)
 - [Software](#software)
@@ -25,6 +25,7 @@ Johan Zicola
 - [Customized GO term plots](#customized-go-term-plots)
 - [Process clusterProfiler output in
   Revigo](#process-clusterprofiler-output-in-revigo)
+- [PANNZER annotation](#pannzer-annotation)
 - [Author](#author)
 - [License](#license)
 
@@ -507,7 +508,7 @@ source("go_functions.R")
 # Note the chdir=TRUE is needed if you load go_functions.R
 # from outside of the GOMAP_maize_B73_NAM5 directory (otherwise, R will fail
 # to load the two R objects
-source("path/to/go_functions.R", chdir=TRUE)
+source("path/to/GOMAP_maize_B73_NAM5/go_functions.R", chdir=TRUE)
 
 # Let's make a vector of all 85 genes annotated with
 # GO ID GO:0019684 (photosynthesis, light reaction)
@@ -685,6 +686,94 @@ Then just copy-paste the content of
 Here it is, the end of the pipeline. I hope this will save time for
 others who struggle finding a GO term annotation and a straightforward
 way to visualize GO term enrichment analysis results.
+
+# PANNZER annotation
+
+For the sake of comparison, I provide here the PANNZER annotation
+released on MaizeGDB.
+
+Note from
+<https://download.maizegdb.org/GeneFunction_and_Expression/Pannzer_GO_Terms/0README.txt>
+(accessed on 2025-05-26):
+
+> The GO terms, functional descriptions, and other annotations are from
+> the Pannzer annotation online server [Annotate
+> Tab](http://ekhidna2.biocenter.helsinki.fi/sanspanz/) using the
+> default settings on the protein sequences from the MaizeGDB download
+> site (<https://download.maizegdb.org/>). Genomes annotated: B73
+> versions RefGen_v3, RefGen_v4 and RefGen_v5, A188, Mo17 (CAU), W22,
+> and the 25 NAM genomes. Text outputs are available for downloading.
+> The downloadable file named “\_GO.out” and “\_DE.out” contain
+> intermediate results for each protein. The final results are in the
+> “annotations (.out)” file. It is a parseable file, which uses a
+> context sensitive grammar, as explained below. The file has six
+> tab-separated columns labelled qpid, type, score, PPV, id and desc.
+> The first column (qpid) always contains the identifier of the query
+> sequence. The second column (type) can take the following values, and
+> the score, PPV, id and desc columns change meaning accordingly:
+
+> original_DE: score is euk for eukaryotic query species and bac
+> otherwise; id is the form factor of desc, the description from the
+> input FASTA file qseq: desc is the amino acid sequence of the query
+> protein DE: score is the prediction score; PPV is the normalized
+> prediction score between 0 and 1; id is the form factor of desc, the
+> predicted description GN: desc is the gene symbol. A gene symbol is
+> predicted if its support is greater than half in the list of homologs
+> ontology_predictor where ontology is one of MF (molecular function),
+> BP (biological process), CC (cellular component) and predictor is one
+> of RM3, ARGOT, HYGE or JAC. score is the prediction score, PPV is the
+> normalized prediction score between 0 and 1, id is the GO identifier
+> and desc is the short description of the GO class EC_predictor: desc
+> is the GO class that has the highest PPV and has a link in ec2go, id
+> is the EC class KEGG_predictor: desc is the GO class that has the
+> highest PPV and has a link in kegg2go, id is the KEGG pathway
+> identifier
+
+> Toronen P, Holm L (2022) PANNZER - a practical tool for protein
+> function prediction. Protein Science 31, 118– 128.
+> <https://doi.org/10.1002/pro.4193>
+
+> Last update 2/8/2022 - C. Andorf
+
+``` bash
+
+wget https://download.maizegdb.org/GeneFunction_and_Expression/Pannzer_GO_Terms/B73_GO.out
+# Last update 2/8/2022 
+
+# Separare GO term and gene ID in two files
+cut -f1 B73_GO.out | cut -d_ -f1 > genes_id
+cut -f3 B73_GO.out | sed 's/^/GO:/' > GO_id
+
+# Remove duplicates and header
+paste GO_id genes_id | sort | uniq | grep "Zm0000" > B73_NAM5_pannzer_GO_annot.txt
+
+# Delete intermediate files
+rm GO_id genes_id
+```
+
+``` r
+source("path/to/GOMAP_maize_B73_NAM5/go_functions.R", chdir=TRUE)
+TERM2GENE <- read.delim("path/to/GOMAP_maize_B73_NAM5/B73_NAM5_pannzer_GO_annot.txt", header=F)
+colnames(TERM2GENE) <- c("GO","gene")
+saveRDS(TERM2GENE, "path/to/GOMAP_maize_B73_NAM5/TERM2GENE_PANNZER_MaizeGDB.rds")
+
+# Source go_functions.R
+source("go_functions.R")
+```
+
+When you want to use the PANNZER annotation instead of GOMAP annotation,
+you need to load the `TERM2GENE` object from PANNZER after
+`source("go_functions.R")`, so to override the `TERM2GENE` automatically
+loaded within `go_functions.R`.
+
+``` r
+source("path/to/GOMAP_maize_B73_NAM5/go_functions.R", chdir = T)
+TERM2GENE <- readRDS("path/to/GOMAP_maize_B73_NAM5/TERM2GENE_PANNZER_MaizeGDB.rds")
+```
+
+Then you can run the `ego_analysis` function on a set of genes (B73 NAM5
+gene names) and compare with the output of analyses done with the GOMAP
+annotation.
 
 # Author
 
