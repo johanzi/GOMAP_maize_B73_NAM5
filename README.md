@@ -38,7 +38,7 @@ Gene Ontology Meta Annotator for Plants
 ([GOMAP](https://bioinformapping.com/gomap/master/RUNNING.html))
 pipeline to make my own GO annotation.
 
-Just after that during the same year, MaizeGDB finally made available a
+Just after that during the same year, MaizeGDB made available a
 GO term annotation for B73 NAM5 (available
 [here](https://download.maizegdb.org/GeneFunction_and_Expression/Pannzer_GO_Terms/)).
 This annotation was performed using
